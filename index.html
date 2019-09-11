@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+    <title>History API - Dive Into HTML5</title>
+    <style>
+        body {
+            width: 960px;
+            height: auto;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 0px;
+            margin-bottom: 0px;
+            font: large/1.556;
+            font-family: Georgia, "Times New Roman", serif;
+            line-height: 28px;
+            padding-bottom: 36px;
+        }
+        td {
+            border: 1px solid black;
+        }
+        p {
+            font-size: large;
+            margin: 28px 0;
+        }
+        a {
+            color: brown;
+            border-bottom: 1px dotted;
+            text-decoration: none;
+        }
+        .floral{
+            margin: 49.8px 0;
+            text-align: center;
+            font-size: xx-large;
+        }
+        .h2title{
+            margin: 44.1px 0;
+            text-align: center;
+            font-size: 210%;
+        }
+        </style>
+    </head>
+
+    <body>
+        <p style="font-size: large; margin: 1.556em 0">You are here: <a href="">Home</a> ▸ <a href="">Dive Into HTML5</a> ▸</p>
+        <h1 style="text-align: center; height: 158.4px; margin: 71.529px 0; font-size: 266.7%; line-height: 1.1">№11<br>MANIPULATING HISTORY<br>FOR FUN & PROFIT</h1>
+        <p style="text-align: center; margin: 28.008px 0"><a href="">show table of contents</a></p>
+        <p class="floral"> &#10087 </p>
+        <h2 class="h2title">DIVING IN</h2>
+        <p><img src="https://diveinto.html5doctor.com/i/aoc-t.png" alt="t" style="float: left" width="110" height="110"></p>
+        <p>he browser location bar is perhaps the geekiest mainstream 
+            piece of user interface in the world. There are URLs on 
+            billboards, on the sides of trains, and even in street 
+            graffiti. Combined with the back button — easily the most 
+            important button in the browser — you have a powerful way 
+            to go forward and backward through the vast set of intertwingled 
+            resources called the Web.</p>
+        <p>The <a href="" style=>HTML5 history API</a> is a standardized way to 
+            manipulate the browser history via script. Part of this API — 
+            navigating the history — has been available in previous versions 
+            of HTML. The new parts in HTML5 include a way to add entries to 
+            the browser history, to visibly change the URL in the browser 
+            location bar (without triggering a page refresh), and an event 
+            that fires when those entries are removed from the stack by the 
+            user pressing the browser’s back button. This means that the URL 
+            in the browser location bar can continue to do its job as a unique 
+            identifier for the current resource, even in script-heavy 
+            applications that don’t ever perform a full page refresh.</p>
+        <p class="floral"> &#10087 </p>
+        <h2 class="h2title">THE WHY</h2>
+        <p><img src="http://diveintohtml5.info/i/openclipart.org_johnny_automatic_demon_reading_Stewart_Orr.png" alt="alt1" style="float: left; margin: 0 28px 28px 0"></p>
+        <p>Why would you manually manipulate the browser location? After all, 
+            a simple link can navigate to a new URL; that’s the way the web 
+            has worked for 20 years. And it will continue to work that way. 
+            This API doesn’t try to subvert the web. Just the opposite. In 
+            recent years, web developers have found new and exciting ways of 
+            subverting the web without any help from emerging standards. The 
+            HTML5 history API is actually designed to ensure that URLs continue 
+            to be useful in script-heavy web applications.</p>
+        <p>Going back to first principles, what does a URL do? It identifies a 
+            unique resource. You can link to it directly; you can bookmark it; 
+            search engines can index it; you can copy and paste it and email it 
+            to someone else, who can click it and end up seeing the same 
+            resource you saw originally. These are all excellent qualities. 
+            URLs matter.</p>
+        <p>So we want unique resources to have unique URLs. But at the same 
+            time, browsers have always had a fundamental limitation: if you 
+            change the URL, even through script, it triggers a roundtrip to 
+            the remote web server and a full page refresh. This takes time 
+            and resources, and it seems especially wasteful when you are 
+            navigating to a page that is substantially similar to the current 
+            page. Everything on the new page gets downloaded, even the parts 
+            that are exactly the same as the current page. There is no way tell 
+            a browser to change the URL but only download half a page.</p>
+        <p>The HTML5 history API lets you do this. Instead of triggering a full 
+            page refresh, you can use script to, in essence, download half a 
+            page. This illusion is tricky to pull off, and it requires some 
+            work on your part. Are you watching closely?</p>
+        <p><img src="http://diveintohtml5.info/i/openclipart.org_johnny_automatic_card_trick.png" alt="alt2" style="float: right"></p>
+        <p>Let’s say you have two pages, page A and page B. The two pages are 
+            90% identical; only 10% of the page content is different. The user 
+            navigates to page A, then tries to navigate to page B. But instead 
+            of triggering a full page refresh, you interrupt this navigation 
+            and do the following steps manually:</p>
+        <ol style="font-size:large">
+            <li>Load the 10% of the page from page B that is different from 
+                page A (probably using XMLHttpRequest). This will require some 
+                server-side changes to your web application. You will need to 
+                write code to return just the 10% of page B that is different 
+                from page A. This can be a hidden URL or query parameter that 
+                the end user would not normally see.</li>
+            <li>Swap in the changed content (using innerHTML or other DOM 
+                methods). You may also need to reset any event handlers on 
+                elements within the swapped-in content.</li>
+            <li>Update the browser location bar with the URL of page B, using a 
+                particular method from the HTML5 history API that I’ll show you 
+                in a moment.</li>
+        </ol>
+        <p>At the end of this illusion (if you executed it correctly), the 
+            browser ends up with a DOM that is identical to page B, just as 
+            if you had navigated to page B directly. The browser location bar 
+            ends up with a URL that is identical to page B, just as if you had 
+            navigated to page B directly. But you never really did navigate to 
+            page B, and you never did a full page refresh. That’s the illusion. 
+            But because the “compiled” page looks the same as page B and has 
+            the same URL as page B, the user should never notice the difference 
+            (nor appreciate all your hard work micromanaging their experience).</p>
+        <p class="floral"> &#10087 </p>
+        <h2 class="h2title">FUTHER READING</h2>
+        <ul style="font-size: large">
+            <li><a href="">Session history and navigation</a> in the HTML5 draft 
+                standard</li>
+            <li><a href="">Manipulating the browser history</a> on Mozilla 
+                Developer Center</li>
+            <li><a href="">Simple history API demo</a></li>
+            <li><a href="">20 Things I Learned About Browsers and the Web</a>, an 
+                advanced demo that uses the history API and other HTML5 techniques</li>
+            <li><a href="">Using HTML5 today</a> describes <a href="">Facebook’s</a> 
+                use of the history API</li>
+            <li><a href="">The Tree Slider</a> describes <a href="">Github’s</a> 
+                use of the history API</li>
+            <li><a href="">History.js</a>, a meta-API for manipulating history in 
+                both newer and older browsers</li>
+        </ul>
+        <p class="floral"> &#10087 </p>
+        <p  style="font-size:large">This has been “Manipulating History for Fun & Profit.” The full 
+            <a href="">table of contents</a> has more if you’d like to keep reading.</p>
+        <div>
+        <table style="border-collapse: collapse; width: 959.2px; height: 320.8px">
+            <thead>
+                <tr>
+                    <td bgcolor="#000000"><p style="color: white; margin: 0px">DID YOU KNOW?</p></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <p><img src="http://diveintohtml5.info/i/openclipart.org_johnny_automatic_bag_of_money.png" alt="guy" style="float:right" width="190" height="250"></p>
+                        <blockquote style="display: block; margin:1em 40px">
+                            <p style="font-size: large; margin:1em 0; width: 673px; height: 112px">In association with Google Press, O’Reilly is distributing this book in a variety of formats, including paper, ePub, Mobi, and DRM-free PDF. The paid edition is called “HTML5: Up & Running,” and it is available now. This chapter is not yet included in the paid edition, so consider it a bonus.</p>
+                            <p style="font-size: large; margin:1em 0; width: 673px; height: 84px">If you liked this chapter and want to show your appreciation, you can <a href="">buy “HTML5: Up & Running” with this affiliate link</a> or <a href="">buy an electronic edition directly from O’Reilly</a>. You’ll get a book, and I’ll get a buck. I do not currently accept direct donations.</p>
+                        </blockquote>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+        <p style="text-align: center">Copyright MMIX–MMXI <a href="" style="color:black">Mark Pilgrim</a></p>
+        <footer style="text-align: center">
+            <input type="text" size="25" placeholder="powered by Google™">
+            <input type="button" value="Submit">
+        </footer>
+    </body>
+
+</html>
