@@ -1,0 +1,163 @@
+body {
+  margin:0;
+  background-image: url(../images/concert.jpg);
+  background-attachment: fixed;
+  background-size: cover; 
+}
+
+header {
+  background-color: black;
+}
+
+.container {
+    width: 90%;
+    margin: 0 auto;
+}
+
+.content {
+  width: 90%;
+  margin: 20% auto 22% auto;
+  animation-duration: 3s;
+  animation-name: slide-in;
+}
+
+.section {
+  color: white;
+  background-color: black;
+  font-size: 20px;
+  border: 1px solid black;
+  padding: 3%;
+}
+
+.section h1, h3, h4 {
+  text-align: center;
+}
+
+.logo {
+  float: left;
+  background-color: white;
+  border-bottom: 3px solid black;
+  border-top: 3px solid black;
+  padding: 5px 0;
+  height: 20%;
+  width: 20%;
+  animation-duration: 3s;
+  animation-name: bounce;
+}
+
+.footer {
+  text-align: center;
+  background-color: black;
+  color: white;
+  height: 50px;
+  padding-top: 1px;
+}
+
+.table {
+  border-collapse: collapse;
+  width: 100%;
+  padding-bottom: 10%;
+}
+
+.table td {
+  width: 33%;
+  border: 1px solid white;
+  padding: 8px;
+}
+
+tr:first-child td{
+  background-color: red;
+  padding: 10px;
+}
+
+
+header::after{
+    content: "";
+    display: table;
+    clear: both;
+}
+
+nav {
+  overflow: hidden;
+  margin-left: 25%;
+}
+
+nav ul {
+  list-style-type: none;
+  margin: 0;
+}
+
+nav ul li {
+  float: left;
+}
+
+li a, .dropbtn {
+  display: inline-block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 24px;
+  transition: 0.5s;
+}
+
+li a:hover, .dropdown:hover .dropbtn {
+  background-color: white;
+  color: black;
+}
+
+li.dropdown {
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: black;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: white;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.dropdown-content a:hover {background-color: #f1f1f1;}
+
+.dropdown:hover .dropdown-content {
+  animation: menu-animation 0.5s forwards;
+  display: block;
+}
+
+@keyframes bounce {
+  0% {
+    transform: scale(0.1);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes slide-in {
+  0% {
+    margin-top: 70%;
+  }
+  100% {
+    margin-top: 20%;
+  }
+}
+
+@keyframes menu-animation {
+  0%{
+    transform: scale(0.7)
+  }
+  100%{
+    opacity: 1;
+    transform: scale(1)
+  }
+}
