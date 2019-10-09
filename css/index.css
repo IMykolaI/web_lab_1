@@ -101,8 +101,7 @@ li a, .dropbtn {
 
 li a:hover, .dropdown:hover .dropbtn {
   transition: 0.5s;
-  background-color: grey;
-  color: black;
+  background-color: orange;
 }
 
 li.dropdown {
