@@ -62,8 +62,14 @@ header {
   text-align: center;
   background-color: black;
   color: white;
-  height: 50px;
-  padding-top: 1px;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+}
+
+.footer p{
+  margin: 0;
 }
 
 header::after{
@@ -101,8 +107,7 @@ li a, .dropbtn {
 
 li a:hover, .dropdown:hover .dropbtn {
   transition: 0.5s;
-  background-color: grey;
-  color: black;
+  background-color: orange;
 }
 
 li.dropdown {

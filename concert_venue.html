@@ -2,10 +2,10 @@
 <html>
 
 <head>
-    <title>Rammstein - Tour Schedule</title>
+    <title>Rammstein - Concert Venue</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/tour_styles.css">
+    <link rel="stylesheet" href="css/concert_venue_styles.css">
 </head>
 
 <body>
@@ -49,35 +49,23 @@
         </nav>
     </header>
     <div class="content">
+        <div class="section" >
+            <h1>The place of the next concert</h1>
+        </div>
         <div class="section">
-            <h1>Tour schedule</h1>
-            <table class="table">
-                    <tr>
-                        <td>&#9660 Date of performance</td>
-                        <td>&#9660 City</td>
-                        <td>&#9660 Performance time</td>
-                    </tr>
-                    <tr>
-                        <td>May 25, 2020</td>
-                        <td>Klagenfurt, Austria</td>
-                        <td>12:00 AM</td>
-                    </tr>
-                    <tr>
-                        <td>May 29-30, 2020</td>
-                        <td>Leipzig, Germany</td>
-                        <td>12:00 AM</td>
-                    </tr>
-                    <tr>
-                        <td>Jun 2-3, 2020</td>
-                        <td>Stuttgart, Germany</td>
-                        <td>6:30 PM</td>
-                    </tr>
-                    <tr>
-                        <td>Jun 6-7, 2020</td>
-                        <td>Zurich, Switzerland</td>
-                        <td>6:30 PM</td>
-                    </tr>
-                </table>
+            <div id="map-container-google-1" class="z-depth-1-half map-container">
+                <iframe src="https://maps.google.com/maps?q=manhatan&t=&z=13&ie=UTF8&iwloc=&output=embed" frameborder="0"
+                style="border:0" allowfullscreen></iframe>
+            </div>
+        </div>
+        <div class="section">
+            <div class="border border-light ">
+                <p class="text-center">Adresses and contact details</p>
+                <p class="text-justify main-par">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean sed justo ut nisi dignissim faucibus et eu mi. Pellentesque sit amet diam euismod lectus pharetra pulvinar. Ut ac tempus metus. Vestibulum sed lorem rhoncus, pulvinar enim sed, congue libero. Maecenas ac mi lorem. Integer gravida tellus nec purus bibendum feugiat. Duis et tincidunt arcu. Aenean dolor nisl, molestie a faucibus in, aliquet vel lectus. Quisque ac rhoncus mi, et blandit dui. Vivamus fringilla lectus libero, et ultrices ipsum dignissim eget. Curabitur at ex eget diam faucibus tincidunt in et sem.</p>
+            </div>
+        </div>
+        <div class="section text-center">
+            <button type="button" class="btn btn-danger">BUY A TICKET NOW!!!</button>
         </div>
     </div>
 
