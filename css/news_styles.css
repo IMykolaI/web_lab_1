@@ -150,6 +150,10 @@ body {
   .col-sm-4 {
       padding: 15px;
   }
+
+  .news {
+    padding-bottom: 15px;
+  }
   
   @keyframes bounce {
     0% {
