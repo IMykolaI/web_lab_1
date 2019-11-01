@@ -3,6 +3,10 @@ body {
     background-color: gray;
   }
   
+  img {
+    max-width: 200px;
+  }
+
   header {
     background-color: black;
   }
@@ -60,7 +64,7 @@ body {
     text-align: center;
     background-color: black;
     color: white;
-    position: absolute;
+    position: static;
     left: 0;
     bottom: 0;
     width: 100%;
