@@ -1,3 +1,20 @@
+window.addEventListener('online', function(event){
+    localStorage.removeItem('appeals');
+    console.log('All data moved to server.');
+    // --- Moving data to indexedDB ---
+});
+
+// --- Appeal Constructor ---
+
+var Appeal = function(){};
+
+Appeal.prototype.name = '';
+Appeal.prototype.text = '';
+Appeal.prototype.time = '';
+Appeal.prototype.date = '';
+
+// --- Functions ---
+
 function addAppeal(){
 
     var date = new Date();
@@ -15,52 +32,28 @@ function addAppeal(){
 
     if(name != "" && appealText != ""){
         form.value = "";
-        var content = document.getElementsByClassName("content");
-        var section = document.createElement("div");
-        section.classList.add("section");
+        var content = document.getElementsByClassName('content');
+        var appeal = document.createElement("div");
+        appeal.innerHTML = `<div class="section">
+                                <div class="row">
+                                    <div class="col-sm-2">
+                                        <p class="border border-light text-center">`+name+`<br>`+time+`<br>`+fullDate+`</p>
+                                    </div>
+                                    <div class="col-sm-1"></div>
+                                    <div class="col-sm-9 border border-light">`+appealText+`</div>
+                                </div>
+                            </div>
+                            <hr class="hor-line">`;
+        
+        content[0].insertBefore(appeal, content[0].childNodes[content[0].childNodes.length - 2]);
 
-        var row = document.createElement("div");
-        row.classList.add("row");
+        newAppeal = new Appeal();
+        newAppeal.name = name;
+        newAppeal.text = appealText;
+        newAppeal.time = time;
+        newAppeal.date = fullDate;
 
-        var div1 = document.createElement("div");
-        div1.classList.add("col-sm-2");
-        var p = document.createElement("p");
-        p.classList.add("border");
-        p.classList.add("border-light");
-        p.classList.add("text-center");
-        var br1 = document.createElement("br");
-        var br2 = document.createElement("br");
-        var text11 = document.createTextNode(name);
-        var text12 = document.createTextNode(time);
-        var text13 = document.createTextNode(fullDate);
-        p.appendChild(text11);
-        p.appendChild(br1);
-        p.appendChild(text12);
-        p.appendChild(br2);
-        p.appendChild(text13);
-        div1.appendChild(p);
-
-        var div2 = document.createElement("div");
-        div2.classList.add("col-sm-1");
-
-        var div3 = document.createElement("div");
-        div3.classList.add("col-sm-9");
-        div3.classList.add("border");
-        div3.classList.add("border-light");
-        var text3 = document.createTextNode(appealText);
-        div3.appendChild(text3);
-
-        row.appendChild(div1);
-        row.appendChild(div2);
-        row.appendChild(div3);
-
-        section.appendChild(row);
-
-        content[0].insertBefore(section, content[0].childNodes[content[0].childNodes.length - 2]);
-
-        var hr = document.createElement("HR");
-        hr.classList.add("hor-line");
-        content[0].insertBefore(hr, content[0].childNodes[content[0].childNodes.length - 2]);
+        saveData('appeals', newAppeal);
 
         alert("Success! Thank you for lefting an appeal.")
     }
@@ -72,4 +65,75 @@ function addAppeal(){
             alert("Please enter valid text.");
         }
     }
+}
+
+function isOnline() {
+    return window.navigator.onLine;
+}
+
+function checkOnline() {
+    if(isOnline()) {
+        checkStorage('appeals', true);
+    } else {
+        checkStorage('appeals', false);
+    }
+}
+
+function checkStorage(key, online){
+    var appealList = localStorage[key];
+    if(appealList) {
+        availableAppeals = JSON.parse(appealList);
+        for(i = 0; i < availableAppeals.length; i++){
+            pasteAppeal(availableAppeals[i]);
+        }
+        if(online) {
+            localStorage.removeItem(key);
+            console.log('All data moved to server.');
+            // --- Moving data to IndexedDB ---
+        }
+    } else {
+        if(online) {
+            // --- Read data from server ---
+        } else {
+            localStorage.setItem(key, '[]');
+        }
+    }
+}
+
+function getStorageItems(key) {
+    return JSON.parse(localStorage[key]);
+}
+
+function saveData(key, appeal) {
+    if(!isOnline()) {
+        savedAppeals = getStorageItems(key);
+
+        if(savedAppeals) {
+            savedAppeals.push(appeal)
+            localStorage[key] = JSON.stringify(savedAppeals);
+        } else {
+            savedAppeals = [];
+            savedAppeals.push(appeal);
+            localStorage[key] = JSON.stringify(savedAppeals);
+        }
+    } else {
+        // --- Saving data to IndexedDB ---
+    }
+}
+
+function pasteAppeal(appealIn){
+    var content = document.getElementsByClassName('content');
+    var appeal = document.createElement("div");
+    appeal.innerHTML = `<div class="section">
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <p class="border border-light text-center">`+appealIn.name+`<br>`+appealIn.time+`<br>`+appealIn.date+`</p>
+                                </div>
+                                <div class="col-sm-1"></div>
+                                <div class="col-sm-9 border border-light">`+appealIn.text+`</div>
+                            </div>
+                        </div>
+                        <hr class="hor-line">`;
+    
+    content[0].insertBefore(appeal, content[0].childNodes[content[0].childNodes.length - 2]);
 }

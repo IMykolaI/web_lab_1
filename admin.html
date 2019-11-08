@@ -9,7 +9,7 @@
     <link href="images/favicon.ico" rel="icon" type="image/x-icon" />
 </head>
 
-<body>
+<body onload="checkOnline()">
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark">
             <a class="navbar-brand" href="#EASTER_EGG">
@@ -53,10 +53,10 @@
         <div class="section">
             <div class="row" >
                 <div class="col-4 text-center">
-                    <input type="file" onchange="addImage(this)"/>
+                    <input id="image-input" type="file" onchange="addImage(this)"/>
                 </div>
                 <div class="col-8 border border-light text-center">
-                    <img id="news-image" src="images/image-placeholder.jpg" alt="news image"/>
+                    <img id="news-image" class="news-image" src="images/image-placeholder.jpg" alt="news image"/>
                 </div>
             </div>
         </div>
