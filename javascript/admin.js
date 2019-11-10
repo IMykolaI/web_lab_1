@@ -125,7 +125,7 @@ function pasteNews(newsIn){
                             </div>
                         </div>`
     news.classList.add("col-lg-4", "col-md-6", "col-sm-12", "news");
-    row[0].insertBefore(news, row[0].childNodes[row[0].childNodes.length - 1]);
+    row[0].insertBefore(news, row[0].childNodes[1]);
 }
 
 function isOnline() {
