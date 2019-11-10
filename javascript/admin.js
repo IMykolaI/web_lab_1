@@ -121,6 +121,7 @@ function pasteNews(newsIn){
     news.innerHTML  =   `<div class="card">
                             <img src="`+ newsIn.image +`" class="card-img-top" alt="image">
                             <div class="card-body">
+                                <h4 class="card-text" style="color: black">` + newsIn.title + `</h4>
                                 <p class="card-text" style="color: black">` + newsIn.body + `</p>
                             </div>
                         </div>`
