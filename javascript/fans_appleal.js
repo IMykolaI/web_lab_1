@@ -1,13 +1,73 @@
+var useLocalStorage = false;
+
+if(!useLocalStorage){
+    window.indexedDB = window.indexedDB || window.mozIndexedDB || 
+    window.webkitIndexedDB || window.msIndexedDB;
+
+    window.IDBTransaction = window.IDBTransaction || 
+    window.webkitIDBTransaction || window.msIDBTransaction;
+
+    window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || 
+    window.msIDBKeyRange;
+
+    var db;
+    var request = window.indexedDB.open("RammsteinAppealsDB", 1);
+
+    request.onsuccess = function(event) {
+        db = request.result;
+    }
+
+    request.onupgradeneeded = function(event) {
+        var db = event.target.result;
+        var objectStore = db.createObjectStore("appeals", {keyPath: "id"});
+    }
+}
+
+function add(appeal) {
+    var adder = db.transaction(["appeals"], "readwrite")
+    .objectStore("appeals")
+    .add(appeal);
+}
+
+function getFromDb() {
+    var appealStore = db.transaction("appeals").objectStore("appeals");
+    appealStore.openCursor().onsuccess = function(event) {
+        var cursor = event.target.result;
+
+        if (cursor) {
+            var appeal = cursor.value;
+            delete appeal['id'];
+            pasteAppeal(appeal);
+            cursor.continue();
+        }
+    }
+}
+
+
 window.addEventListener('online', function(event){
-    localStorage.removeItem('appeals');
-    console.log('All data moved to server.');
-    // --- Moving data to indexedDB ---
+    if(useLocalStorage){
+        var availableAppeals = JSON.parse(this.localStorage.getItem('appeals'));
+        for(i = 0; i < availableAppeals.length; i++){
+            pasteAppeal(availableAppeals[i])
+        }
+    } else {
+        getFromDb();
+    }
+});
+
+window.addEventListener('offline', function(event){
+    if(useLocalStorage){
+        if(!this.localStorage.getItem("appeals")){
+            localStorage.setItem("appeals", '[]');
+        }
+    }
 });
 
 // --- Appeal Constructor ---
 
 var Appeal = function(){};
 
+Appeal.prototype.id = '';
 Appeal.prototype.name = '';
 Appeal.prototype.text = '';
 Appeal.prototype.time = '';
@@ -32,22 +92,9 @@ function addAppeal(){
 
     if(name != "" && appealText != ""){
         form.value = "";
-        var content = document.getElementsByClassName('content');
-        var appeal = document.createElement("div");
-        appeal.innerHTML = `<div class="section">
-                                <div class="row">
-                                    <div class="col-sm-2">
-                                        <p class="border border-light text-center">`+name+`<br>`+time+`<br>`+fullDate+`</p>
-                                    </div>
-                                    <div class="col-sm-1"></div>
-                                    <div class="col-sm-9 border border-light">`+appealText+`</div>
-                                </div>
-                            </div>
-                            <hr class="hor-line">`;
-        
-        content[0].insertBefore(appeal, content[0].childNodes[content[0].childNodes.length - 2]);
 
         newAppeal = new Appeal();
+        newAppeal.id = guid();
         newAppeal.name = name;
         newAppeal.text = appealText;
         newAppeal.time = time;
@@ -82,20 +129,24 @@ function checkOnline() {
 function checkStorage(key, online){
     var appealList = localStorage[key];
     if(appealList) {
-        availableAppeals = JSON.parse(appealList);
-        for(i = 0; i < availableAppeals.length; i++){
-            pasteAppeal(availableAppeals[i]);
-        }
         if(online) {
-            localStorage.removeItem(key);
-            console.log('All data moved to server.');
-            // --- Moving data to IndexedDB ---
+            if(useLocalStorage){
+                availableAppeals = JSON.parse(appealList);
+                for(var i in availableAppeals) {
+                    pasteAppeal(availableAppeals[i]);
+                }
+            } else {
+                getFromDb();
+            }
+            
         }
     } else {
         if(online) {
             // --- Read data from server ---
         } else {
-            localStorage.setItem(key, '[]');
+            if(useLocalStorage) {
+                localStorage.setItem(key, '[]');
+            }
         }
     }
 }
@@ -106,18 +157,22 @@ function getStorageItems(key) {
 
 function saveData(key, appeal) {
     if(!isOnline()) {
-        savedAppeals = getStorageItems(key);
+        if(useLocalStorage){
+            savedAppeals = getStorageItems(key);
 
-        if(savedAppeals) {
-            savedAppeals.push(appeal)
-            localStorage[key] = JSON.stringify(savedAppeals);
+            if(savedAppeals) {
+                savedAppeals.push(appeal)
+                localStorage[key] = JSON.stringify(savedAppeals);
+            } else {
+                savedAppeals = [];
+                savedAppeals.push(appeal);
+                localStorage[key] = JSON.stringify(savedAppeals);
+            }
         } else {
-            savedAppeals = [];
-            savedAppeals.push(appeal);
-            localStorage[key] = JSON.stringify(savedAppeals);
+            add(appeal);
         }
     } else {
-        // --- Saving data to IndexedDB ---
+        // --- Saving data to server ---
     }
 }
 
@@ -136,4 +191,14 @@ function pasteAppeal(appealIn){
                         <hr class="hor-line">`;
     
     content[0].insertBefore(appeal, content[0].childNodes[content[0].childNodes.length - 2]);
+}
+
+function guid() {
+    function s4() {
+    	return Math.floor((1 + Math.random()) * 0x10000)
+               .toString(16)
+               .substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+            s4() + '-' + s4() + s4() + s4();
 }

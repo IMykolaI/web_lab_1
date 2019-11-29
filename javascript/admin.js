@@ -1,12 +1,73 @@
+var useLocalStorage = false;
+
+if(!useLocalStorage){
+    window.indexedDB = window.indexedDB || window.mozIndexedDB || 
+    window.webkitIndexedDB || window.msIndexedDB;
+
+    window.IDBTransaction = window.IDBTransaction || 
+    window.webkitIDBTransaction || window.msIDBTransaction;
+
+    window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || 
+    window.msIDBKeyRange;
+
+    var db;
+    var request = window.indexedDB.open("RammsteinNewsDB", 1);
+
+    request.onsuccess = function(event) {
+        db = request.result;
+    }
+
+    request.onupgradeneeded = function(event) {
+        var db = event.target.result;
+        var objectStore = db.createObjectStore("news", {keyPath: "id"});
+    }
+}
+
+
+function add(news) {
+    var adder = db.transaction(["news"], "readwrite")
+    .objectStore("news")
+    .add(news);
+}
+
+function getFromDb() {
+    var newsStore = db.transaction("news").objectStore("news");
+    newsStore.openCursor().onsuccess = function(event) {
+        var cursor = event.target.result;
+
+        if (cursor) {
+            var news = cursor.value;
+            delete news['id'];
+            pasteNews(news);
+            cursor.continue();
+        }
+    }
+}
+
 window.addEventListener('online', function(event){
-    localStorage.removeItem('news');
-    // --- Moving data to indexedDB ---
+    if(useLocalStorage){
+        var availableNews = JSON.parse(this.localStorage.getItem('news'));
+        for(i = 0; i < availableNews.length; i++) {
+            pasteNews(availableNews[i])
+        }
+    } else {
+        getFromDb();
+    }
+});
+
+window.addEventListener('offline', function(event){
+    if(useLocalStorage){
+        if(!this.localStorage.getItem('news')){
+            this.localStorage.setItem('news', "[]")
+        }
+    }
 });
 
 
 // --- News Constructor ---
 var News = function(){};
 
+News.prototype.id = '';
 News.prototype.title = '';
 News.prototype.body = '';
 News.prototype.image = '';
@@ -25,12 +86,13 @@ function checkStorage(key, online){
     var newsList = localStorage[key];
     if(newsList) {
         if(online) {
-            localStorage.removeItem(key);
-            // --- Moving data to IndexedDB ---
+            // --- Moving data to server ---
         }
     } else {
         if(!online) {
-            localStorage.setItem(key, '[]');
+            if(useLocalStorage){
+                localStorage.setItem(key, '[]');
+            }
         }
     }
 }
@@ -38,17 +100,20 @@ function checkStorage(key, online){
 function checkNewNews() {
     var newsList = localStorage['news'];
     if(newsList) {
-        var availableNews = JSON.parse(newsList);
-        for(i = 0; i < availableNews.length; i++) {
-            pasteNews(availableNews[i]);
-        }
         if(isOnline()) {
-            localStorage.removeItem['news'];
-            // --- Move data to DB
+            if(useLocalStorage){
+                var availableNews = JSON.parse(newsList);
+                for(i = 0; i < availableNews.length; i++) {
+                    pasteNews(availableNews[i]);
+                }
+            } else {
+                getFromDb();
+            }
+            
         }
     } else {
         if(isOnline()) {
-            // --- Read data from IndexedDB ---
+            // --- Read data from server ---
         }
     }
 }
@@ -78,6 +143,7 @@ function validateNews(){
         document.getElementById("news-image").setAttribute("src", "images/image-placeholder.jpg");
         
         newNews = new News();
+        newNews.id = guid();
         newNews.title = title;
         newNews.body = body;
         newNews.image = imageSrc;
@@ -101,16 +167,20 @@ function validateNews(){
 
 function saveData(key, newsIn){
     if(isOnline()){
-        // --- Saving to IndexedDB ---
+        // --- Saving to server ---
     } else {
-        savedNews = getStorageItems(key);
-        if(savedNews) {
-            savedNews.push(newsIn);
-            localStorage[key] = JSON.stringify(savedNews);
+        if(useLocalStorage){
+            savedNews = getStorageItems(key);
+            if(savedNews) {
+                savedNews.unshift(newsIn);
+                localStorage[key] = JSON.stringify(savedNews);
+            } else {
+                savedNews = [];
+                savedNews.unshift(newsIn);
+                localStorage[key] = JSON.stringify(savedNews);
+            }
         } else {
-            savedNews = [];
-            savedNews.push(newsIn);
-            localStorage[key] = JSON.stringify(savedNews);
+            add(newsIn);
         }
     }
 }
@@ -135,4 +205,14 @@ function isOnline() {
 
 function getStorageItems(key) {
     return JSON.parse(localStorage[key]);
+}
+
+function guid() {
+    function s4() {
+    	return Math.floor((1 + Math.random()) * 0x10000)
+               .toString(16)
+               .substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+            s4() + '-' + s4() + s4() + s4();
 }
